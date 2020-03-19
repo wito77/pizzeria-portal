@@ -1,33 +1,39 @@
+/* global require, process */
 const fs = require('fs');
+const path = require('path');
+const jsonServer = require('json-server');
+const server = jsonServer.create();
+const router = jsonServer.router('build/db/app.json');
+const middlewares = jsonServer.defaults({
+  static: './',
+  noCors: true
+});
+const port = process.env.PORT || 3131;
 
-const distDir = './server';
+server.get(/\/panel.*/, (req, res) => {
+  if (req.url == '/panel') {
+    req.url += '/';
+  }
+  const filePath = __dirname + req.url.replace('/panel', '/build');
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.sendFile(path.join(__dirname + '/build/index.html'));
+  }
+});
 
-if (!fs.existsSync(distDir)) {
-  fs.mkdirSync(distDir);
-}
+server.use(function (req, res, next) {
+  const api = /^\/api(.*)$/.exec(req.url);
 
-const dbFileSrc = './src/db.json';
-const dbFileDist = distDir + '/db.json';
+  if (api && api.length > 1) {
+    req.url = api[1] || '/';
+  } else {
+    req.url = '/build/front' + req.url;
+  }
+  next();
+});
 
-if (
-  !fs.existsSync(dbFileDist) && // comment out this line to always overwrite db.json
-  fs.existsSync(dbFileSrc)
-){
-  fs.copyFileSync(dbFileSrc, dbFileDist);
-}
+server.use(middlewares);
+server.use(router);
 
-if (fs.existsSync(dbFileDist)){
-  const jsonServer = require('json-server');
-  const server = jsonServer.create();
-  const router = jsonServer.router(dbFileDist);
-  const middlewares = jsonServer.defaults({
-    static: 'dist',
-    // noCors: true,
-  });
-  const port = process.env.PORT || 3131;
-
-  server.use(middlewares);
-  server.use(router);
-
-  server.listen(port);
-}
+server.listen(port);
