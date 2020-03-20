@@ -8,8 +8,4 @@ const Dashboard = () => (
   </div>
 );
 
-// Dashboard.propTypes = {
-//   children: PropTypes.node,
-// };
-
 export default Dashboard;

@@ -8,8 +8,4 @@ const Login = () => (
   </div>
 );
 
-// Login.propTypes = {
-//   children: PropTypes.node,
-// };
-
 export default Login;
