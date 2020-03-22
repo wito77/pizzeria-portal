@@ -1,0 +1,15 @@
+.navigation {
+  text-align: right;
+}
+
+nav {
+  display: inline-block;
+  text-decoration: none;
+  color: black;
+  margin-bottom: 60px;
+  font-size: 24px;
+}
+
+nav:last-child {
+  text-align: right;
+}

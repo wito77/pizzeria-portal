@@ -1,5 +1,10 @@
 @import '../../../styles/settings.scss';
 
-.component {
+.loginComponent {
   padding: $base-size;
+
+  h2 {
+    text-align: center;
+    font-size: 60px;
+  }
 }
