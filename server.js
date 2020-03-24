@@ -4,11 +4,19 @@ const path = require('path');
 const jsonServer = require('json-server');
 const server = jsonServer.create();
 const router = jsonServer.router('build/db/app.json');
-const middlewares = jsonServer.defaults({
-  static: './',
-  noCors: true
-});
+const middlewares = jsonServer.defaults();
 const port = process.env.PORT || 3131;
+const cors = require('cors');
+
+server.use(
+  cors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  })
+);
+
+server.use(middlewares);
+server.use(router);
 
 server.get(/\/panel.*/, (req, res) => {
   if (req.url == '/panel') {
@@ -32,8 +40,5 @@ server.use(function (req, res, next) {
   }
   next();
 });
-
-server.use(middlewares);
-server.use(router);
 
 server.listen(port);
